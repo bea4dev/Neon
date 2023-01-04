@@ -1,0 +1,6 @@
+name: Neon
+version: '${project.version}'
+main: com.github.bea4dev.neon.Neon
+api-version: 1.15
+
+depend: [ VanillaSource ]
