@@ -10,6 +10,14 @@ public final class Neon extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+
+        //Load scripts
+        try {
+            Script.loadAllModules();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load scripts.");
+        }
     }
 
     @Override
