@@ -6,11 +6,11 @@ import org.contan_lang.variables.primitive.ContanFunctionExpression;
 public class ScriptFunctionHolder {
 
     public final ItemStack icon;
-    public final ContanFunctionExpression function;
+    public final ContanFunctionExpression expression;
 
-    public ScriptFunctionHolder(ItemStack icon, ContanFunctionExpression function) {
+    public ScriptFunctionHolder(ItemStack icon, ContanFunctionExpression expression) {
         this.icon = icon;
-        this.function = function;
+        this.expression = expression;
     }
 
 }

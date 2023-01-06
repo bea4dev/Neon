@@ -16,6 +16,7 @@ public class BlockInfo {
 
     private BlockData blockData;
     private boolean isGround = false;
+    public String tag = "NULL";
 
     public BlockInfo(TickThread thread, String worldName, BlockPosition3i position) {
         this.thread = thread;
