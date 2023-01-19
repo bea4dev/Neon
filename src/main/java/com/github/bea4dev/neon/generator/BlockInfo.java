@@ -8,20 +8,24 @@ import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 import thpmc.vanilla_source.api.world.cache.EngineWorld;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BlockInfo {
 
     public final TickThread thread;
     public final EngineWorld world;
     public final BlockPosition3i position;
 
-    private BlockData blockData;
-    private boolean isGround = false;
-    public String tag = "NULL";
+    private BlockData blockData = null;
+    public Map<String, Object> tag = new HashMap<>();
+    private BlockData originalData;
 
     public BlockInfo(TickThread thread, String worldName, BlockPosition3i position) {
         this.thread = thread;
         this.position = position;
         this.world = thread.getThreadLocalCache().getGlobalWorld(worldName);
+        this.tag.put("ground", false);
 
         read();
     }
@@ -32,6 +36,10 @@ public class BlockInfo {
             this.blockData = Material.AIR.createBlockData();
         } else {
             this.blockData = blockData;
+        }
+
+        if (originalData == null) {
+            originalData = blockData;
         }
     }
 
@@ -68,12 +76,6 @@ public class BlockInfo {
         this.setMaterial(Material.matchMaterial(materialName));
     }
 
-    public void markAsGround() {
-        this.isGround = true;
-    }
-
-    public void setGround(boolean ground) {isGround = ground;}
-
-    public boolean isGround() {return isGround;}
+    public BlockData getOriginalData() {return originalData;}
 
 }

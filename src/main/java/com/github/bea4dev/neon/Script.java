@@ -7,7 +7,6 @@ import thpmc.vanilla_source.api.VanillaSourceAPI;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,15 +47,15 @@ public class Script {
 
             StringBuilder script = new StringBuilder();
 
-            try{
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(path.toFile()) , StandardCharsets.UTF_8));
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(path.toFile().toPath()), StandardCharsets.UTF_8));
                 String data;
                 while ((data = bufferedReader.readLine()) != null) {
                     script.append(data);
                     script.append('\n');
                 }
                 bufferedReader.close();
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new IllegalStateException("Failed to load script file '" + path.toFile().getName() + "'.", e);
             }
 

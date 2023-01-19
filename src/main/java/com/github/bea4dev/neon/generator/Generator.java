@@ -3,8 +3,6 @@ package com.github.bea4dev.neon.generator;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.contan_lang.syntax.tokens.StringToken;
-import org.contan_lang.syntax.tokens.Token;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 import thpmc.vanilla_source.api.world.ChunkUtil;
@@ -46,7 +44,7 @@ public class Generator {
 
     public Set<BlockInfo> getAllGroundBlocks() {
         Set<BlockInfo> set = getAllBlocks();
-        set.removeIf(blockInfo -> !blockInfo.isGround());
+        set.removeIf(blockInfo -> ((Boolean) blockInfo.tag.get("ground")));
         return set;
     }
 

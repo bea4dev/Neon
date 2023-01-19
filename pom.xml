@@ -77,7 +77,7 @@
         <dependency>
             <groupId>thpmc</groupId>
             <artifactId>vanilla_source_api</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
