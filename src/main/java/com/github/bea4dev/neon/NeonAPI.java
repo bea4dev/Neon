@@ -3,7 +3,6 @@ package com.github.bea4dev.neon;
 import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

@@ -3,18 +3,21 @@ package com.github.bea4dev.neon.editor;
 import com.github.bea4dev.neon.NeonAPI;
 import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.contan_lang.ContanEngine;
 import org.contan_lang.ContanModule;
 import org.contan_lang.syntax.exception.ContanParseException;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.VanillaSourceAPI;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Brush {
@@ -35,12 +38,12 @@ public class Brush {
                 "    }.await()\n" +
                 "}");
 
-        load();
+        loadAll();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void load() {
-        File dir = new File("plugins/VanillaSource/camera");
+    public static void loadAll() {
+        File dir = new File("plugins/NeonGenerator/brush");
 
         dir.getParentFile().mkdir();
         dir.mkdir();
@@ -61,24 +64,52 @@ public class Brush {
 
                 String id = file.getName().replace(".yml", "");
                 String displayName = yml.getString("display-name");
+                List<String> description = yml.getStringList("description");
                 List<String> functionIdList = yml.getStringList("function-id-list");
-                brushMap.put(id, new Brush(id, displayName, functionIdList));
+                Material icon = Material.matchMaterial(Objects.requireNonNull(yml.getString("icon-material")));
+                brushMap.put(id, new Brush(id, displayName, description, functionIdList, icon));
             }
         }
     }
 
+    public static void saveAll() throws IOException {
+        for (Brush brush : brushMap.values()) {
+            brush.save();
+        }
+    }
+
+    public static @Nullable Brush getBrush(String id) {
+        return brushMap.get(id);
+    }
+
+    public static Collection<Brush> getAllBrushes() {
+        return brushMap.values();
+    }
+
+    public static void register(Brush brush) {
+        brushMap.put(brush.id, brush);
+    }
 
 
 
-    private final String id;
-    private final String displayName;
-    private final List<String> functionIdList;
 
-    public Brush(String id, String displayName, List<String> functionIdList) {
+    public final String id;
+    public final String displayName;
+    private final List<String> description;
+    public final List<String> functionIdList;
+    private ItemStack itemStack;
+
+    public Brush(String id, String displayName, List<String> description, List<String> functionIdList, Material icon) {
         this.id = id;
         this.displayName = displayName;
+        description.add("");
+        description.add(ChatColor.RESET.toString() + ChatColor.GRAY + id);
+        this.description = description;
         this.functionIdList = functionIdList;
+        this.setIcon(icon);
     }
+
+    public ItemStack getItem() {return itemStack;}
 
     public void run(Block block) throws ExecutionException, InterruptedException {
         Generator generator = NeonAPI.getGenerator(block);
@@ -87,6 +118,23 @@ public class Brush {
             holderList.add(NeonAPI.functionMap.get(functionId));
         }
         contanModule.invokeFunction(generator.thread, "run", generator.thread, generator, holderList);
+    }
+
+    public void setIcon(Material icon) {
+        this.itemStack = new ItemStack(icon);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        Objects.requireNonNull(itemMeta).setDisplayName(displayName);
+        Objects.requireNonNull(itemMeta).setLore(description);
+        itemStack.setItemMeta(itemMeta);
+    }
+
+    public void save() throws IOException {
+        File file = new File("plugins/NeonGenerator/brush/" + id + ".yml");
+        YamlConfiguration yml = new YamlConfiguration();
+        yml.set("display-name", displayName);
+        yml.set("function-id-list", functionIdList);
+        yml.set("icon-material", itemStack.getType().getKey().getKey());
+        yml.save(file);
     }
 
 }
