@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 import thpmc.vanilla_source.api.world.cache.EngineWorld;
@@ -17,7 +18,7 @@ public class BlockInfo {
     public final EngineWorld world;
     public final BlockPosition3i position;
 
-    private BlockData blockData = null;
+    public @Nullable BlockData data = null;
     public Map<String, Object> tag = new HashMap<>();
     private BlockData originalData;
 
@@ -33,9 +34,9 @@ public class BlockInfo {
     public void read() {
         BlockData blockData = world.getBlockData(position.getX(), position.getY(), position.getZ());
         if (blockData == null) {
-            this.blockData = Material.AIR.createBlockData();
+            this.data = Material.AIR.createBlockData();
         } else {
-            this.blockData = blockData;
+            this.data = blockData;
         }
 
         if (originalData == null) {
@@ -51,18 +52,16 @@ public class BlockInfo {
         if (bukkitWorld == null) {
             throw new IllegalStateException("World '" + world.getName() + "' does not exist.");
         }
-        bukkitWorld.getBlockAt(position.getX(), position.getY(), position.getZ()).setBlockData(this.blockData);
+        bukkitWorld.getBlockAt(position.getX(), position.getY(), position.getZ()).setBlockData(this.data);
     }
 
-    public BlockData getBlockData() {
-        return this.blockData;
-    }
+    public BlockData getBlockData() {return this.data;}
 
     public void setBlockData(BlockData blockData) {
         if (blockData == null) {
             blockData = Material.AIR.createBlockData();
         }
-        this.blockData = blockData;
+        this.data = blockData;
     }
 
     public void setMaterial(Material material) {
@@ -72,9 +71,7 @@ public class BlockInfo {
         this.setBlockData(material.createBlockData());
     }
 
-    public void setMaterial(String materialName) {
-        this.setMaterial(Material.matchMaterial(materialName));
-    }
+    public void setMaterial(String materialName) {this.setMaterial(Material.matchMaterial(materialName));}
 
     public BlockData getOriginalData() {return originalData;}
 

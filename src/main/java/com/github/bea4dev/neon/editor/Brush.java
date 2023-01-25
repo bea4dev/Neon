@@ -1,12 +1,14 @@
 package com.github.bea4dev.neon.editor;
 
 import com.github.bea4dev.neon.NeonAPI;
+import com.github.bea4dev.neon.generator.BlockInfo;
 import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.contan_lang.ContanEngine;
@@ -29,13 +31,11 @@ public class Brush {
     public static void initialize() throws ContanParseException {
         ContanEngine contanEngine = VanillaSourceAPI.getInstance().getContanEngine();
         contanModule = contanEngine.compile(".neon_internal", "" +
-                "function run(thread, generator, list) {\n" +
-                "    sync (generator.thread) {\n" +
-                "        all holder in list {\n" +
-                "            const expression = holder.expression\n" +
-                "            expression(generator)\n" +
-                "        }\n" +
-                "    }.await()\n" +
+                "function run(generator, list, player, block) {\n" +
+                "    all holder in list {\n" +
+                "        const expression = holder.expression\n" +
+                "        expression(generator, player, block)\n" +
+                "    }\n" +
                 "}");
 
         loadAll();
@@ -111,13 +111,23 @@ public class Brush {
 
     public ItemStack getItem() {return itemStack;}
 
-    public void run(Block block) throws ExecutionException, InterruptedException {
+    public void run(Player player, Block block) throws ExecutionException, InterruptedException {
         Generator generator = NeonAPI.getGenerator(block);
         List<ScriptFunctionHolder> holderList = new ArrayList<>();
         for (String functionId : functionIdList) {
             holderList.add(NeonAPI.functionMap.get(functionId));
         }
-        contanModule.invokeFunction(generator.thread, "run", generator.thread, generator, holderList);
+        BlockInfo center = generator.getBlock(block.getX(), block.getY(), block.getZ());
+        Runnable task = () -> {
+            try {
+                contanModule.invokeFunction(generator.thread, "run", generator, holderList, player, center);
+            } catch (Exception e) {
+                player.sendMessage(ChatColor.RED + "ブラシ使用時にエラーが発生しました(詳細はコンソールを確認してください)");
+                player.sendMessage( ChatColor.YELLOW + e.getMessage());
+                e.printStackTrace();
+            }
+        };
+        generator.thread.scheduleTask(task);
     }
 
     public void setIcon(Material icon) {

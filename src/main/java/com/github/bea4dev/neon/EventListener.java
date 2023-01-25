@@ -48,7 +48,7 @@ public class EventListener implements Listener {
             }
 
             try {
-                brush.run(block);
+                brush.run(player, block);
             } catch (Exception e) {
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);

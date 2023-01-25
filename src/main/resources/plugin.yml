@@ -4,3 +4,10 @@ main: com.github.bea4dev.neon.Neon
 api-version: 1.15
 
 depend: [ VanillaSource ]
+
+libraries:
+  - net.propromp:neocommander:1.5.1
+
+permissions:
+  neon.command.neon:
+    default: op
