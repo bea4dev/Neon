@@ -22,8 +22,8 @@ public class BlockInfoChunk {
         this.chunkZ = chunkZ;
     }
 
-    public BlockInfo getOrCreateBlockInfo(BlockPosition3i position) {
-        return blockInfoMap.computeIfAbsent(position, key -> new BlockInfo(thread, world.getName(), position));
+    public BlockInfo getOrCreateBlockInfo(Generator generator, BlockPosition3i position) {
+        return blockInfoMap.computeIfAbsent(position, key -> new BlockInfo(thread, generator, world.getName(), position));
     }
 
     public Set<BlockInfo> getAllBlocks() {

@@ -31,7 +31,7 @@ public class Generator {
 
     public BlockInfo getBlock(int x, int y, int z) {
         BlockInfoChunk chunk = blockInfoMap.computeIfAbsent(ChunkUtil.getChunkKey(x, y), key -> new BlockInfoChunk(thread, world, x >> 4, z >> 4));
-        return chunk.getOrCreateBlockInfo(new BlockPosition3i(x, y, z));
+        return chunk.getOrCreateBlockInfo(this, new BlockPosition3i(x, y, z));
     }
 
     public Set<BlockInfo> getAllBlocks() {

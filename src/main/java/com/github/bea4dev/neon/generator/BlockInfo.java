@@ -15,6 +15,7 @@ import java.util.Map;
 public class BlockInfo {
 
     public final TickThread thread;
+    public final Generator generator;
     public final EngineWorld world;
     public final BlockPosition3i position;
 
@@ -22,8 +23,9 @@ public class BlockInfo {
     public Map<String, Object> tag = new HashMap<>();
     private BlockData originalData;
 
-    public BlockInfo(TickThread thread, String worldName, BlockPosition3i position) {
+    public BlockInfo(TickThread thread, Generator generator, String worldName, BlockPosition3i position) {
         this.thread = thread;
+        this.generator = generator;
         this.position = position;
         this.world = thread.getThreadLocalCache().getGlobalWorld(worldName);
         this.tag.put("ground", false);
@@ -74,5 +76,29 @@ public class BlockInfo {
     public void setMaterial(String materialName) {this.setMaterial(Material.matchMaterial(materialName));}
 
     public BlockData getOriginalData() {return originalData;}
+
+    public double getFlatness() {
+
+    }
+
+    public boolean isExposed() {
+        BlockInfo upBlock = generator.getBlock(position.getX(), position.getY() + 1, position.getZ());
+        BlockData upBlockData = upBlock.getBlockData();
+        if (upBlockData == null) {
+            return true;
+        } else {
+            return upBlockData.getMaterial().isAir();
+        }
+    }
+
+    public BlockInfo getExposedBlock() {
+        BlockInfo currentBlock = this;
+        while (true) {
+            if (currentBlock.isExposed()) {
+                return currentBlock;
+            }
+
+        }
+    }
 
 }
