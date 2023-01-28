@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
@@ -77,27 +78,106 @@ public class BlockInfo {
 
     public BlockData getOriginalData() {return originalData;}
 
-    public double getFlatness() {
-
+    public double getUpFlatnessFactor() {
+        return getUpFlatnessFactor(3);
     }
 
-    public boolean isExposed() {
+    public double getUpFlatnessFactor(int kernelSize) {
+        int positionX = position.getX();
+        int positionY = position.getY();
+        int positionZ = position.getZ();
+        double flatness = 0.0;
+        int numberOfBlocks = 0;
+        for (int x = positionX - kernelSize; x <= positionX + kernelSize; x++) {
+            for (int z = positionZ - kernelSize; z <= positionZ + kernelSize; z++) {
+                BlockInfo block = generator.getBlock(x, positionY, z);
+                if (block == null) {
+                    continue;
+                }
+                BlockInfo exposed = block.getUpExposedBlock();
+                flatness += Math.abs(positionY - exposed.position.getY());
+                numberOfBlocks++;
+            }
+        }
+        return flatness / (double) numberOfBlocks;
+    }
+
+    public boolean isUpExposed() {
+        if (data != null && !data.getMaterial().isSolid()) {
+            return true;
+        }
         BlockInfo upBlock = generator.getBlock(position.getX(), position.getY() + 1, position.getZ());
+        if (upBlock == null) {
+            return true;
+        }
         BlockData upBlockData = upBlock.getBlockData();
         if (upBlockData == null) {
             return true;
         } else {
-            return upBlockData.getMaterial().isAir();
+            return !upBlockData.getMaterial().isSolid();
         }
     }
 
-    public BlockInfo getExposedBlock() {
+    public boolean isDownExposed() {
+        if (data != null && !data.getMaterial().isSolid()) {
+            return false;
+        }
+        BlockInfo downBlock = generator.getBlock(position.getX(), position.getY() - 1, position.getZ());
+        if (downBlock == null) {
+            return true;
+        }
+        BlockData downBlockData = downBlock.getBlockData();
+        if (downBlockData == null) {
+            return true;
+        } else {
+            return !downBlockData.getMaterial().isSolid();
+        }
+    }
+
+    public boolean isExposedYAxis() {return isUpExposed() || isDownExposed();}
+
+    public @NotNull BlockInfo getUpExposedBlock() {
         BlockInfo currentBlock = this;
         while (true) {
-            if (currentBlock.isExposed()) {
-                return currentBlock;
+            if (currentBlock.isUpExposed()) {
+                break;
             }
+            BlockPosition3i position = currentBlock.position;
+            BlockInfo upBlock = generator.getBlock(position.getX(), position.getY() + 1, position.getZ());
+            if (upBlock == null) {
+                break;
+            }
+            currentBlock = upBlock;
+        }
+        return currentBlock;
+    }
 
+    public @NotNull BlockInfo getDownExposedBlock() {
+        BlockInfo currentBlock = this;
+        while (true) {
+            if (currentBlock.isDownExposed()) {
+                break;
+            }
+            BlockPosition3i position = currentBlock.position;
+            BlockInfo downBlock = generator.getBlock(position.getX(), position.getY() - 1, position.getZ());
+            if (downBlock == null) {
+                break;
+            }
+            currentBlock = downBlock;
+        }
+        return currentBlock;
+    }
+
+    public @NotNull BlockInfo getExposedBlockYAxis() {
+        BlockInfo upExposedBlock = getUpExposedBlock();
+        BlockInfo downExposedBlock = getDownExposedBlock();
+        int upY = upExposedBlock.position.getY();
+        int downY = downExposedBlock.position.getY();
+        int y = position.getY();
+        if (upY - y < y - downY) {
+            return upExposedBlock;
+        } else {
+            return downExposedBlock;
         }
     }
 

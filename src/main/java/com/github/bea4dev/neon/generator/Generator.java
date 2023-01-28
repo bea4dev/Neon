@@ -3,6 +3,7 @@ package com.github.bea4dev.neon.generator;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 import thpmc.vanilla_source.api.world.ChunkUtil;
@@ -29,7 +30,10 @@ public class Generator {
         this.rangeBox = BoundingBox.of(rangeMin, rangeMax);
     }
 
-    public BlockInfo getBlock(int x, int y, int z) {
+    public @Nullable BlockInfo getBlock(int x, int y, int z) {
+        if (y > world.getMaxHeight()) {
+            return null;
+        }
         BlockInfoChunk chunk = blockInfoMap.computeIfAbsent(ChunkUtil.getChunkKey(x, y), key -> new BlockInfoChunk(thread, world, x >> 4, z >> 4));
         return chunk.getOrCreateBlockInfo(this, new BlockPosition3i(x, y, z));
     }

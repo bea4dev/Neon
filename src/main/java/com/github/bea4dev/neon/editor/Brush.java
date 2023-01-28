@@ -78,17 +78,11 @@ public class Brush {
         }
     }
 
-    public static @Nullable Brush getBrush(String id) {
-        return brushMap.get(id);
-    }
+    public static @Nullable Brush getBrush(String id) {return brushMap.get(id);}
 
-    public static Collection<Brush> getAllBrushes() {
-        return brushMap.values();
-    }
+    public static Collection<Brush> getAllBrushes() {return brushMap.values();}
 
-    public static void register(Brush brush) {
-        brushMap.put(brush.id, brush);
-    }
+    public static void register(Brush brush) {brushMap.put(brush.id, brush);}
 
 
 
