@@ -22,6 +22,8 @@ public class Generator {
 
     public final List<ScriptFunctionHolder> functionList = new ArrayList<>();
 
+    public final Map<String, Object> tag = new HashMap<>();
+
     public Generator(TickThread thread, World world, Vector rangePos1, Vector rangePos2) {
         this.thread = thread;
         this.world = world;
@@ -48,12 +50,10 @@ public class Generator {
 
     public Set<BlockInfo> getAllGroundBlocks() {
         Set<BlockInfo> set = getAllBlocks();
-        set.removeIf(blockInfo -> ((Boolean) blockInfo.tag.get("ground")));
+        set.removeIf(blockInfo -> !((Boolean) blockInfo.tag.get("ground")));
         return set;
     }
 
-    public boolean isInRange(int x, int y, int z) {
-        return rangeBox.contains(x, y, z);
-    }
+    public boolean isInRange(int x, int y, int z) {return rangeBox.contains(x, y, z);}
 
 }

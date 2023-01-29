@@ -33,7 +33,7 @@ public class Brush {
         contanModule = contanEngine.compile(".neon_internal", "" +
                 "function run(generator, list, player, block) {\n" +
                 "    all holder in list {\n" +
-                "        const expression = holder.expression\n" +
+                "        data expression = holder.expression\n" +
                 "        expression(generator, player, block)\n" +
                 "    }\n" +
                 "}");

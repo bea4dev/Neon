@@ -4,13 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 import thpmc.vanilla_source.api.world.cache.EngineWorld;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BlockInfo {
@@ -78,11 +81,11 @@ public class BlockInfo {
 
     public BlockData getOriginalData() {return originalData;}
 
-    public double getUpFlatnessFactor() {
-        return getUpFlatnessFactor(3);
+    public double getGroundFlatnessFactor() {
+        return getGroundFlatnessFactor(3);
     }
 
-    public double getUpFlatnessFactor(int kernelSize) {
+    public double getGroundFlatnessFactor(int kernelSize) {
         int positionX = position.getX();
         int positionY = position.getY();
         int positionZ = position.getZ();
@@ -179,6 +182,35 @@ public class BlockInfo {
         } else {
             return downExposedBlock;
         }
+    }
+
+    public List<BlockInfo> getSquare(int radius) {
+        List<BlockInfo> list = new ArrayList<>();
+        for (int x = position.getX() - radius; x <= position.getX() + radius; x++) {
+            for (int y = position.getY() - radius; y <= position.getY() + radius; y++) {
+                for (int z = position.getZ() - radius; z <= position.getZ() + radius; z++) {
+                    BlockInfo block = generator.getBlock(x, y, z);
+                    if (block != null) {
+                        list.add(block);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<BlockInfo> getSphere(int radius) {
+        List<BlockInfo> square = this.getSquare(radius);
+        double radiusSquared = (double) radius * radius;
+        List<BlockInfo> sphere = new ArrayList<>();
+        for (BlockInfo block : square) {
+            Vector blockPosition = new Vector(block.position.getX(), block.position.getY(), block.position.getZ());
+            Vector thisPosition = new Vector(position.getX(), position.getY(), position.getZ());
+            if (blockPosition.distanceSquared(thisPosition) < radiusSquared) {
+                sphere.add(block);
+            }
+        }
+        return sphere;
     }
 
 }
