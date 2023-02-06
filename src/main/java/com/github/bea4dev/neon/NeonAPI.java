@@ -2,14 +2,17 @@ package com.github.bea4dev.neon;
 
 import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
+import com.github.bea4dev.neon.texture.BlockTextureInfo;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.contan_lang.variables.primitive.ContanFunctionExpression;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.VanillaSourceAPI;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
+import thpmc.vanilla_source.api.util.BlockPosition3i;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,5 +45,28 @@ public class NeonAPI {
         Vector maxPos = block.getLocation().toVector().add(add);
         return generatorMap.computeIfAbsent(block.getWorld().getName(), key -> new Generator(thread, block.getWorld(), minPos, maxPos));
     }
+
+    public static @Nullable BlockTextureInfo findBlockRGB(int r, int g, int b) {
+        return BlockTextureInfo.findBlockRGB(r, g, b);
+    }
+
+    public static @Nullable BlockTextureInfo findBlockHSV(float h, float s, float v) {
+        return BlockTextureInfo.findBlockHSV(h, s, v);
+    }
+
+    /*
+    public static void test(Generator generator, BlockPosition3i position) {
+        int x = 0;
+        for (int r = 0; r < 256; r++) {
+            int y = 0;
+            for (int g = 0; g < 256; g++) {
+                for (int b = 0; b < 256; b++) {
+
+                    y++;
+                }
+            }
+            x = r;
+        }
+    }*/
 
 }

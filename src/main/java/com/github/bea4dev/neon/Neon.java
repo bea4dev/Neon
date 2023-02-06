@@ -2,6 +2,7 @@ package com.github.bea4dev.neon;
 
 import com.github.bea4dev.neon.command.CommandRegistry;
 import com.github.bea4dev.neon.editor.Brush;
+import com.github.bea4dev.neon.texture.BlockTextureLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,13 @@ public final class Neon extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+
+        //Load textures
+        try {
+            BlockTextureLoader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         //Load scripts
         try {
