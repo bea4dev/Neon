@@ -1,5 +1,8 @@
 package com.github.bea4dev.neon.generator;
 
+import com.github.bea4dev.neon.texture.BlockTextureInfo;
+import com.github.bea4dev.neon.texture.HSV;
+import com.github.bea4dev.neon.texture.RGB;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -212,5 +215,32 @@ public class BlockInfo {
         }
         return sphere;
     }
+
+
+    public @Nullable BlockTextureInfo getTexture() {
+        Material material = null;
+        BlockData data = this.data;
+        if (data != null) {
+            material = data.getMaterial();
+        }
+        return BlockTextureInfo.getTextureInfo(material);
+    }
+
+    public @Nullable RGB getRGB() {
+        BlockTextureInfo textureInfo = this.getTexture();
+        if (textureInfo == null) {
+            return null;
+        }
+        return textureInfo.rgb;
+    }
+
+    public @Nullable HSV getHSV() {
+        BlockTextureInfo textureInfo = this.getTexture();
+        if (textureInfo == null) {
+            return null;
+        }
+        return textureInfo.hsv;
+    }
+
 
 }

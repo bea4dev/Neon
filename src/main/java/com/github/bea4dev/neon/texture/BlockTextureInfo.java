@@ -15,6 +15,9 @@ public class BlockTextureInfo {
     }
 
     public static @Nullable BlockTextureInfo getTextureInfo(Material material) {
+        if (material == null) {
+            return null;
+        }
         return textureInfoMap.get(material);
     }
 
