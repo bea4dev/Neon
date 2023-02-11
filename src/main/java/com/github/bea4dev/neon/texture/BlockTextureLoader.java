@@ -15,7 +15,11 @@ public class BlockTextureLoader {
             String materialString = material.toString();
             if (!material.isBlock() || material.isAir() || !material.isSolid() || material.isLegacy()
                     || materialString.endsWith("_PRESSURE_PLATE") || material.isEdible() || material.isInteractable()
-                    || materialString.contains("GLASS") || materialString.contains("HEAD") || materialString.contains("BANNER")) { continue; }
+                    || materialString.contains("GLASS") || materialString.contains("HEAD") || materialString.contains("BANNER")) {
+                BlockTextureInfo textureInfo = new BlockTextureInfo(material, new RGB(0, 0, 0), new HSV(0, 0, 0));
+                BlockTextureInfo.register(textureInfo);
+                continue;
+            }
 
             String materialName = material.getKey().getKey().replace("minecraft:", "");
 

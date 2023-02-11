@@ -12,7 +12,6 @@ import org.contan_lang.variables.primitive.ContanFunctionExpression;
 import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.VanillaSourceAPI;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
-import thpmc.vanilla_source.api.util.BlockPosition3i;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,11 +46,19 @@ public class NeonAPI {
     }
 
     public static @Nullable BlockTextureInfo findBlockRGB(int r, int g, int b) {
-        return BlockTextureInfo.findBlockRGB(r, g, b);
+        return BlockTextureInfo.findBlockRGB(r, g, b, material -> true);
     }
 
-    public static @Nullable BlockTextureInfo findBlockHSV(float h, float s, float v) {
-        return BlockTextureInfo.findBlockHSV(h, s, v);
+    public static @Nullable BlockTextureInfo findBlockHSV(double h, double s, double v) {
+        return BlockTextureInfo.findBlockHSV((float) h, (float) s, (float) v, material -> true);
+    }
+
+    public static @Nullable BlockTextureInfo findNormalBlockRGB(int r, int g, int b) {
+        return BlockTextureInfo.findBlockRGB(r, g, b, Material::isOccluding);
+    }
+
+    public static @Nullable BlockTextureInfo findNormalBlockHSV(double h, double s, double v) {
+        return BlockTextureInfo.findBlockHSV((float) h, (float) s, (float) v, Material::isOccluding);
     }
 
     /*

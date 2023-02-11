@@ -2,6 +2,7 @@ package com.github.bea4dev.neon;
 
 import com.github.bea4dev.neon.command.CommandRegistry;
 import com.github.bea4dev.neon.editor.Brush;
+import com.github.bea4dev.neon.pallet.Pallet;
 import com.github.bea4dev.neon.texture.BlockTextureLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -25,6 +26,9 @@ public final class Neon extends JavaPlugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        //Load pallet
+        Pallet.loadAll();
 
         //Load scripts
         try {
@@ -56,6 +60,13 @@ public final class Neon extends JavaPlugin {
         // Plugin shutdown logic
         try {
             Brush.saveAll();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Save pallet
+        try {
+            Pallet.saveAll();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

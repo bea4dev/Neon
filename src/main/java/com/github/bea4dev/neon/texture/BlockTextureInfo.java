@@ -1,10 +1,14 @@
 package com.github.bea4dev.neon.texture;
 
+import com.github.bea4dev.neon.pallet.Pallet;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BlockTextureInfo {
 
@@ -21,10 +25,14 @@ public class BlockTextureInfo {
         return textureInfoMap.get(material);
     }
 
-    public static @Nullable BlockTextureInfo findBlockRGB(int r, int g, int b) {
+    public static @Nullable BlockTextureInfo findBlockRGB(int r, int g, int b, Function<Material, Boolean> filter) {
         BlockTextureInfo currentTexture = null;
         int currentMinDifference = Integer.MAX_VALUE;
         for (BlockTextureInfo textureInfo : textureInfoMap.values()) {
+            if (!filter.apply(textureInfo.material)) {
+                continue;
+            }
+
             RGB rgb = textureInfo.rgb;
             int difference = Math.abs(rgb.r - r) + Math.abs(rgb.g - g) + Math.abs(rgb.b - b);
             if (difference < currentMinDifference) {
@@ -35,10 +43,14 @@ public class BlockTextureInfo {
         return currentTexture;
     }
 
-    public static @Nullable BlockTextureInfo findBlockHSV(float h, float s, float v) {
+    public static @Nullable BlockTextureInfo findBlockHSV(float h, float s, float v, Function<Material, Boolean> filter) {
         BlockTextureInfo currentTexture = null;
         float currentMinDifference = Float.MAX_VALUE;
         for (BlockTextureInfo textureInfo : textureInfoMap.values()) {
+            if (!filter.apply(textureInfo.material)) {
+                continue;
+            }
+
             HSV hsv = textureInfo.hsv;
             float difference = Math.abs(hsv.h - h) + Math.abs(hsv.s - s) + Math.abs(hsv.v - v);
             if (difference < currentMinDifference) {
@@ -55,6 +67,8 @@ public class BlockTextureInfo {
 
     public final RGB rgb;
     public final HSV hsv;
+
+    public final List<Pallet> pallets = new ArrayList<>();
 
     public BlockTextureInfo(Material material, RGB rgb, HSV hsv) {
         this.material = material;
