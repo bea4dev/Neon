@@ -9,10 +9,7 @@ import thpmc.vanilla_source.api.util.math.EasingBezier2D;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class Pallet {
 
@@ -55,12 +52,24 @@ public final class Pallet {
         }
     }
 
+    public static void register(@NotNull Pallet pallet) {
+        palletMap.put(pallet.id, pallet);
+    }
+
 
 
     public final String id;
-    public final List<Material> list = new ArrayList<>();
+    public final List<Material> list;
 
-    public Pallet(String id) {this.id = id;}
+    public Pallet(String id) {
+        this.id = id;
+        this.list = new ArrayList<>();
+    }
+
+    public Pallet(String id, List<Material> list) {
+        this.id = id;
+        this.list = list;
+    }
 
 
     public @NotNull Material up(@NotNull Material material) {
@@ -110,7 +119,7 @@ public final class Pallet {
 
             BlockTextureInfo textureInfo = BlockTextureInfo.getTextureInfo(material);
             if (textureInfo != null) {
-                textureInfo.pallets.add(this);
+                textureInfo.pallets.put(this.id, this);
             }
         }
     }

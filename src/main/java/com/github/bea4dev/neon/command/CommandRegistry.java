@@ -1,23 +1,22 @@
 package com.github.bea4dev.neon.command;
 
-import com.github.bea4dev.neon.Neon;
-import net.propromp.neocommander.api.CommandManager;
-import net.propromp.neocommander.api.annotation.AnnotationManager;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIConfig;
+import org.bukkit.plugin.Plugin;
 
 public class CommandRegistry {
 
-    private static CommandManager commandManager;
-
-    public static void register(Neon plugin) {
-        commandManager = new CommandManager(plugin);
-        AnnotationManager annotationManager = commandManager.getAnnotationManager();
-        annotationManager.register(new NeonCommand());
+    public static void onLoad() {
+        CommandAPI.onLoad(new CommandAPIConfig().verboseOutput(true));
+        NeonCommand.register();
     }
 
-    public static void unregister() {
-        if (commandManager != null) {
-            commandManager.clearCommands();
-        }
+    public static void onEnable(Plugin plugin) {
+        CommandAPI.onEnable(plugin);
+    }
+
+    public static void onDisable() {
+        CommandAPI.onDisable();
     }
 
 }

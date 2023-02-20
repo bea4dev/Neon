@@ -4,10 +4,7 @@ import com.github.bea4dev.neon.pallet.Pallet;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class BlockTextureInfo {
@@ -68,7 +65,7 @@ public class BlockTextureInfo {
     public final RGB rgb;
     public final HSV hsv;
 
-    public final List<Pallet> pallets = new ArrayList<>();
+    public final Map<String, Pallet> pallets = new HashMap<>();
 
     public BlockTextureInfo(Material material, RGB rgb, HSV hsv) {
         this.material = material;

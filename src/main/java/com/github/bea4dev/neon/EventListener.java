@@ -1,12 +1,15 @@
 package com.github.bea4dev.neon;
 
 import com.github.bea4dev.neon.editor.Brush;
+import com.github.bea4dev.neon.pallet.PalletManager;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -56,6 +59,18 @@ public class EventListener implements Listener {
                 player.sendMessage(ChatColor.RED + "ブラシ処理実行時にエラーが発生しました");
                 player.sendMessage(ChatColor.YELLOW + stringWriter.toString());
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBreakBlock(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            return;
+        }
+
+        if (PalletManager.register(player, event.getBlock())) {
+            event.setCancelled(true);
         }
     }
 

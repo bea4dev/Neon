@@ -16,6 +16,12 @@ public final class Neon extends JavaPlugin {
     private static Neon plugin;
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        CommandRegistry.onLoad();
+    }
+
+    @Override
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
@@ -51,7 +57,7 @@ public final class Neon extends JavaPlugin {
         pluginManager.registerEvents(new EventListener(), this);
 
         //Register commands
-        CommandRegistry.register(this);
+        CommandRegistry.onEnable(this);
 
     }
 
@@ -72,7 +78,7 @@ public final class Neon extends JavaPlugin {
         }
 
         //Unregister commands
-        CommandRegistry.unregister();
+        CommandRegistry.onDisable();
     }
 
     public static Neon getPlugin() {return plugin;}

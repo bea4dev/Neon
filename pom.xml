@@ -30,7 +30,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -39,6 +39,12 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>dev.jorel.commandapi</pattern>
+                                    <shadedPattern>com.github.bea4dev.neon.relocation.commandapi</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -81,10 +87,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.propromp</groupId>
-            <artifactId>neocommander</artifactId>
-            <version>1.5.1</version>
-            <scope>provided</scope>
+            <groupId>dev.jorel</groupId>
+            <artifactId>commandapi-shade</artifactId>
+            <version>8.7.5</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,16 +1,35 @@
 package com.github.bea4dev.neon.command;
 
 import com.github.bea4dev.neon.editor.BrushEditor;
-import net.propromp.neocommander.api.annotation.Command;
-import net.propromp.neocommander.api.annotation.Sender;
-import org.bukkit.entity.Player;
+import com.github.bea4dev.neon.pallet.PalletManager;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.TextArgument;
+import org.bukkit.ChatColor;
 
-@Command(name = "neon", permission = "neon.command.neon")
+
 public class NeonCommand {
 
-    @Command(name = "brush", description = "Open brush gui")
-    public void brush(@Sender Player sender) {
-        BrushEditor.openBrushMainMenu(sender);
+    public static void register() {
+
+        new CommandAPICommand("neon").withSubcommands(
+                new CommandAPICommand("brush")
+                        .executesPlayer((sender, args) -> { BrushEditor.openBrushMainMenu(sender); }),
+
+                new CommandAPICommand("pallet").withSubcommands(
+                        new CommandAPICommand("register")
+                                .withArguments(new TextArgument("name"))
+                                .executesPlayer((sender, args) -> {
+                                    if (PalletManager.registerNameMap.containsKey(sender.getUniqueId())) {
+                                        sender.sendMessage(ChatColor.RED + "The specified name already exists.");
+                                        return;
+                                    }
+                                    PalletManager.registerNameMap.put(sender.getUniqueId(), (String) args[0]);
+
+                                    sender.sendMessage(ChatColor.AQUA + "Click on the palette block you wish to register.");
+                                })
+                )
+        ).register();
+
     }
 
 }
