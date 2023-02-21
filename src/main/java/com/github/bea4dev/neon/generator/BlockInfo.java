@@ -26,6 +26,9 @@ public class BlockInfo {
     public final EngineWorld world;
     public final BlockPosition3i position;
 
+    private int heightLevel = 0;
+    private int visualHeightLevel = 0;
+
     public @Nullable BlockData data = null;
     public Map<String, Object> tag = new HashMap<>();
     private BlockData originalData;
@@ -71,6 +74,15 @@ public class BlockInfo {
             blockData = Material.AIR.createBlockData();
         }
         this.data = blockData;
+    }
+
+    public @Nullable Material getMaterial() {
+        BlockData data = this.data;
+        if (data == null) {
+            return null;
+        } else {
+            return data.getMaterial();
+        }
     }
 
     public void setMaterial(Material material) {
@@ -216,6 +228,14 @@ public class BlockInfo {
         return sphere;
     }
 
+    public boolean isSolid() {
+        BlockData data = this.data;
+        if (data == null) {
+            return false;
+        }
+        return data.getMaterial().isSolid();
+    }
+
 
     public @Nullable BlockTextureInfo getTexture() {
         Material material = null;
@@ -242,5 +262,12 @@ public class BlockInfo {
         return textureInfo.hsv;
     }
 
+    public int getHeightLevel() {return heightLevel;}
+
+    public int getVisualHeightLevel() {return visualHeightLevel;}
+
+    public void setHeightLevel(int heightLevel) {this.heightLevel = heightLevel;}
+
+    public void setVisualHeightLevel(int visualHeightLevel) {this.visualHeightLevel = visualHeightLevel;}
 
 }

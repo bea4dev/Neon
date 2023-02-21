@@ -1,8 +1,10 @@
 package com.github.bea4dev.neon.command;
 
 import com.github.bea4dev.neon.editor.BrushEditor;
+import com.github.bea4dev.neon.pallet.Pallet;
 import com.github.bea4dev.neon.pallet.PalletManager;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.TextArgument;
 import org.bukkit.ChatColor;
 
@@ -26,9 +28,12 @@ public class NeonCommand {
                                     PalletManager.registerNameMap.put(sender.getUniqueId(), (String) args[0]);
 
                                     sender.sendMessage(ChatColor.AQUA + "Click on the palette block you wish to register.");
-                                })
+                                }),
+                        new CommandAPICommand("remove")
+                                .withArguments(new TextArgument("name").replaceSuggestions(ArgumentSuggestions.strings(info -> Pallet.getAllPalletsName().toArray(new String[0]))))
+                                .executes((sender, args) -> { Pallet.remove((String) args[0]); })
                 )
-        ).register();
+        ).withPermission("neon.command.neon").register();
 
     }
 

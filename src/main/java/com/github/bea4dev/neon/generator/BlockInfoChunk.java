@@ -1,6 +1,7 @@
 package com.github.bea4dev.neon.generator;
 
 import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 import thpmc.vanilla_source.api.util.BlockPosition3i;
 
@@ -24,6 +25,10 @@ public class BlockInfoChunk {
 
     public BlockInfo getOrCreateBlockInfo(Generator generator, BlockPosition3i position) {
         return blockInfoMap.computeIfAbsent(position, key -> new BlockInfo(thread, generator, world.getName(), position));
+    }
+
+    public @Nullable BlockInfo getBlockInfo(BlockPosition3i position) {
+        return blockInfoMap.get(position);
     }
 
     public Set<BlockInfo> getAllBlocks() {

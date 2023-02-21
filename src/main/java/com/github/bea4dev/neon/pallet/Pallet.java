@@ -4,7 +4,9 @@ import com.github.bea4dev.neon.Neon;
 import com.github.bea4dev.neon.texture.BlockTextureInfo;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.util.math.EasingBezier2D;
 
 import java.io.File;
@@ -56,6 +58,14 @@ public final class Pallet {
         palletMap.put(pallet.id, pallet);
     }
 
+    public static @Nullable Pallet getPallet(@NotNull String name) {return palletMap.get(name);}
+
+    public static Collection<Pallet> getAllPallets() {return palletMap.values();}
+
+    public static Set<String> getAllPalletsName() {return palletMap.keySet();}
+
+    public static void remove(String name) {palletMap.remove(name);}
+
 
 
     public final String id;
@@ -90,7 +100,7 @@ public final class Pallet {
         }
     }
 
-    public List<Material> getGradation(int size, double x2, double y2, double x3, double y3) {
+    public Pallet getGradation(int size, double x2, double y2, double x3, double y3) {
         EasingBezier2D curve = new EasingBezier2D(x2, y2, x3, y3);
         int maxIndex = list.size() - 1;
 
@@ -98,11 +108,15 @@ public final class Pallet {
         for (int i = 0; i < size; i++) {
             double t = (double) i / (double) (size - 1);
             double progress = curve.getProgressByTime(t);
-            int index = Math.min((int) (progress * (double) maxIndex), maxIndex);
+            int index = Math.min((int) (progress * (double) maxIndex + 0.01), maxIndex);
             gradationList.add(list.get(index));
         }
 
-        return gradationList;
+        return new Pallet("", gradationList);
+    }
+
+    public Pallet getGradationForLightLevel(double x2, double y2, double x3, double y3) {
+        return getGradation(16, x2, y2, x3, y3);
     }
 
 

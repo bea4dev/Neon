@@ -14,6 +14,7 @@ public class Generator {
 
     public final TickThread thread;
     private final World world;
+    public final GeneratorLightEngine lightEngine;
     private Vector rangeMin;
     private Vector rangeMax;
     private BoundingBox rangeBox;
@@ -27,6 +28,7 @@ public class Generator {
     public Generator(TickThread thread, World world, Vector rangePos1, Vector rangePos2) {
         this.thread = thread;
         this.world = world;
+        this.lightEngine = new GeneratorLightEngine(this);
         this.rangeMin = Vector.getMinimum(rangePos1, rangePos2);
         this.rangeMax = Vector.getMaximum(rangePos1, rangePos2);
         this.rangeBox = BoundingBox.of(rangeMin, rangeMax);
@@ -36,8 +38,19 @@ public class Generator {
         if (y > world.getMaxHeight()) {
             return null;
         }
-        BlockInfoChunk chunk = blockInfoMap.computeIfAbsent(ChunkUtil.getChunkKey(x, y), key -> new BlockInfoChunk(thread, world, x >> 4, z >> 4));
+        BlockInfoChunk chunk = blockInfoMap.computeIfAbsent(ChunkUtil.getChunkKey(x, z), key -> new BlockInfoChunk(thread, world, x >> 4, z >> 4));
         return chunk.getOrCreateBlockInfo(this, new BlockPosition3i(x, y, z));
+    }
+
+    public @Nullable BlockInfo getBlockIfExists(int x, int y, int z) {
+        if (y > world.getMaxHeight()) {
+            return null;
+        }
+        BlockInfoChunk chunk = blockInfoMap.get(ChunkUtil.getChunkKey(x, z));
+        if (chunk == null) {
+            return null;
+        }
+        return chunk.getBlockInfo(new BlockPosition3i(x, y, z));
     }
 
     public Set<BlockInfo> getAllBlocks() {

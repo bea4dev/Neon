@@ -26,8 +26,6 @@ public class PalletManager {
             material = block.getType();
         }
 
-        Collections.reverse(list);
-
         Pallet pallet = new Pallet(name, list);
         Pallet.register(pallet);
 

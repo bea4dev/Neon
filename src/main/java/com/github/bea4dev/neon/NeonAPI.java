@@ -1,7 +1,9 @@
 package com.github.bea4dev.neon;
 
+import com.github.bea4dev.neon.generator.BlockInfo;
 import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
+import com.github.bea4dev.neon.pallet.Pallet;
 import com.github.bea4dev.neon.texture.BlockTextureInfo;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,10 +11,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.contan_lang.variables.primitive.ContanFunctionExpression;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.VanillaSourceAPI;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,19 +65,20 @@ public class NeonAPI {
         return BlockTextureInfo.findBlockHSV((float) h, (float) s, (float) v, Material::isOccluding);
     }
 
-    /*
-    public static void test(Generator generator, BlockPosition3i position) {
-        int x = 0;
-        for (int r = 0; r < 256; r++) {
-            int y = 0;
-            for (int g = 0; g < 256; g++) {
-                for (int b = 0; b < 256; b++) {
+    public static @Nullable Pallet getPallet(@NotNull String name) {
+        return Pallet.getPallet(name);
+    }
 
-                    y++;
-                }
+    public static Collection<Object> filterIsSolid(Collection<Object> collection) {
+        collection.removeIf(object -> {
+            if (object instanceof BlockInfo) {
+                BlockInfo block = (BlockInfo) object;
+                Material material = block.getMaterial();
+                return material != null && !material.isSolid();
             }
-            x = r;
-        }
-    }*/
+            return false;
+        });
+        return collection;
+    }
 
 }
