@@ -5,15 +5,20 @@ import com.github.bea4dev.neon.generator.Generator;
 import com.github.bea4dev.neon.generator.ScriptFunctionHolder;
 import com.github.bea4dev.neon.pallet.Pallet;
 import com.github.bea4dev.neon.texture.BlockTextureInfo;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.contan_lang.runtime.JavaContanFuture;
+import org.contan_lang.variables.ContanObject;
+import org.contan_lang.variables.primitive.ContanBoolean;
 import org.contan_lang.variables.primitive.ContanFunctionExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import thpmc.vanilla_source.api.VanillaSourceAPI;
+import thpmc.vanilla_source.api.contan.ContanUtil;
 import thpmc.vanilla_source.api.entity.tick.TickThread;
 
 import java.util.Collection;
@@ -79,6 +84,49 @@ public class NeonAPI {
             return false;
         });
         return collection;
+    }
+
+    public static Collection<Object> applyPalletForVisualHeightLevel(String palletName, Collection<Object> collection) {
+        Pallet pallet = getPallet(palletName);
+        if (pallet == null) { throw new IllegalArgumentException("Pallet '" + palletName + "' is not found."); }
+        if (pallet.list.size() != 16) { throw new IllegalArgumentException("Pallet '" + palletName + "' is not 16 in length."); }
+
+        filterIsSolid(collection);
+
+        for (Object object : collection) {
+            if (!(object instanceof BlockInfo)) { continue; }
+
+            BlockInfo block = (BlockInfo) object;
+            int heightLevel = block.getHeightLevel();
+            if (heightLevel >= 0 && block.isEdited()) {
+                Material material = pallet.list.get(heightLevel);
+                block.setMaterial(material);
+            }
+        }
+        return collection;
+    }
+
+    public static ContanObject<?> writeAll(Collection<Object> collection) {
+        JavaContanFuture future = ContanUtil.createFutureInstance();
+
+        Bukkit.getScheduler().runTask(Neon.getPlugin(), () -> {
+            try {
+                for (Object object : collection) {
+                    if (!(object instanceof BlockInfo)) {
+                        continue;
+                    }
+                    BlockInfo block = (BlockInfo) object;
+                    block.write();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                future.complete(new ContanBoolean(VanillaSourceAPI.getInstance().getContanEngine(), false));
+                return;
+            }
+            future.complete(new ContanBoolean(VanillaSourceAPI.getInstance().getContanEngine(), true));
+        });
+
+        return future.getContanInstance();
     }
 
 }

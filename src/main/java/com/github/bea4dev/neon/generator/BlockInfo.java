@@ -26,8 +26,10 @@ public class BlockInfo {
     public final EngineWorld world;
     public final BlockPosition3i position;
 
-    private int heightLevel = 0;
-    private int visualHeightLevel = 0;
+    private boolean isEdited = true;
+
+    private int heightLevel = -1;
+    private int visualHeightLevel = -1;
 
     public @Nullable BlockData data = null;
     public Map<String, Object> tag = new HashMap<>();
@@ -57,6 +59,7 @@ public class BlockInfo {
     }
 
     public void write() {
+        if (!this.isEdited) { return; }
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("This operation is not allowed on asynchronous threads.");
         }
@@ -65,6 +68,7 @@ public class BlockInfo {
             throw new IllegalStateException("World '" + world.getName() + "' does not exist.");
         }
         bukkitWorld.getBlockAt(position.getX(), position.getY(), position.getZ()).setBlockData(this.data);
+        this.isEdited = false;
     }
 
     public BlockData getBlockData() {return this.data;}
@@ -74,6 +78,7 @@ public class BlockInfo {
             blockData = Material.AIR.createBlockData();
         }
         this.data = blockData;
+        this.isEdited = true;
     }
 
     public @Nullable Material getMaterial() {
@@ -90,6 +95,7 @@ public class BlockInfo {
             material = Material.AIR;
         }
         this.setBlockData(material.createBlockData());
+        this.isEdited = true;
     }
 
     public void setMaterial(String materialName) {this.setMaterial(Material.matchMaterial(materialName));}
@@ -262,12 +268,20 @@ public class BlockInfo {
         return textureInfo.hsv;
     }
 
+    public boolean isEdited() {return isEdited;}
+
     public int getHeightLevel() {return heightLevel;}
 
     public int getVisualHeightLevel() {return visualHeightLevel;}
 
-    public void setHeightLevel(int heightLevel) {this.heightLevel = heightLevel;}
+    public void setHeightLevel(int heightLevel) {
+        this.heightLevel = heightLevel;
+        this.isEdited = true;
+    }
 
-    public void setVisualHeightLevel(int visualHeightLevel) {this.visualHeightLevel = visualHeightLevel;}
+    public void setVisualHeightLevel(int visualHeightLevel) {
+        this.visualHeightLevel = visualHeightLevel;
+        this.isEdited = true;
+    }
 
 }
